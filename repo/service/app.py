@@ -2,6 +2,7 @@ import json
 import os
 import socket
 import threading
+from pathlib import Path
 
 import boto3
 import torch
@@ -18,7 +19,10 @@ FAULT_INJECT = os.environ.get("FAULT_INJECT", "0") == "1"
 S3_ACCESS_KEY = os.environ.get("S3_ACCESS_KEY", "")
 S3_SECRET_KEY = os.environ.get("S3_SECRET_KEY", "")
 
-with open(os.environ.get("SCHEMA_PATH", "/app/schema.json")) as f:
+schema_path = Path(os.environ.get("SCHEMA_PATH", "/app/schema.json"))
+if not schema_path.exists():
+    schema_path = Path(__file__).resolve().parents[1] / "data" / "schema.json"
+with schema_path.open() as f:
     SCHEMA = json.load(f)
 VALID_KEYS = set(SCHEMA["keys"])
 VALID_INTENTS = set(SCHEMA["intents"])
@@ -115,7 +119,7 @@ def parse(req: ParseRequest, response: Response):
 
     try:
         obj = json.loads(raw)
-    except Exception:
+    except json.JSONDecodeError:
         response.status_code = 500
         return {"error": "invalid_model_output"}
 

@@ -12,12 +12,14 @@ Env vars required:
   OUTPUT_BUCKET   default "datasets"
   OUTPUT_KEY      default f"teacher/shard-{SHARD_INDEX}.jsonl"
 """
-import os
 import json
+import os
 import sys
 import time
-import requests
+from pathlib import Path
+
 import boto3
+import requests
 
 SHARD_INDEX = int(os.environ["SHARD_INDEX"])
 SHARD_COUNT = int(os.environ["SHARD_COUNT"])
@@ -28,7 +30,10 @@ S3_SECRET_KEY = os.environ["S3_SECRET_KEY"]
 INPUT_PATH = os.environ.get("INPUT_PATH", "/data/commands_pool.jsonl")
 OUTPUT_BUCKET = os.environ.get("OUTPUT_BUCKET", "datasets")
 OUTPUT_KEY = os.environ.get("OUTPUT_KEY", f"teacher/shard-{SHARD_INDEX}.jsonl")
-PROMPT_PATH = os.environ.get("PROMPT_PATH", "/prompts/teacher_prompt.txt")
+PROMPT_PATH = os.environ.get(
+    "PROMPT_PATH",
+    str(Path(__file__).resolve().parents[1] / "prompts" / "teacher_prompt.txt"),
+)
 MODEL = "phi3.5"
 
 with open(PROMPT_PATH) as f:
@@ -50,12 +55,29 @@ def call_teacher(command_text: str) -> str:
             "model": MODEL,
             "prompt": prompt,
             "stream": False,
-            "options": {"temperature": 0, "seed": 42},
+            "options": {
+                "temperature": 0,
+                "seed": 42,
+                "num_predict": 80,
+                "stop": ["\n\n", "```"],
+                "num_ctx": 1024,
+            },
         },
-        timeout=120,
+        timeout=240,
     )
     resp.raise_for_status()
-    return resp.json()["response"].strip()
+    raw = resp.json()["response"].strip()
+    if "{" in raw:
+        start = raw.index("{")
+        depth = 0
+        for i, ch in enumerate(raw[start:], start=start):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return raw[start:i + 1]
+    return raw
 
 
 def main():
@@ -79,7 +101,7 @@ def main():
                 try:
                     raw = call_teacher(text)
                     break
-                except Exception as e:
+                except (requests.RequestException, KeyError, ValueError) as e:
                     print(f"  retry {cid}: {e}", file=sys.stderr)
                     time.sleep(2)
             else:
