@@ -1,0 +1,9 @@
+{
+  "currency": "INR",
+  "replicas": 2,
+  "vcpu_hour": 3.5,
+  "gib_memory_hour": 0.45,
+  "hourly_all_replicas": 7.9,
+  "measured_rps": 0.39,
+  "cost_per_1000_requests": 5.63
+}

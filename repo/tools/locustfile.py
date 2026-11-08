@@ -26,7 +26,8 @@ from locust import HttpUser, constant, events, task
 TEXTS_FILE = os.environ.get('LOADTEST_TEXTS', 'data/validation.jsonl')
 HEADERS_OUT = os.environ.get('LOADTEST_HEADERS_OUT', 'results/loadtest_headers.json')
 
-_texts = [json.loads(line)['text'] for line in open(TEXTS_FILE, encoding='utf-8') if line.strip()]
+with open(TEXTS_FILE, encoding='utf-8') as text_file:
+    _texts = [json.loads(line)['text'] for line in text_file if line.strip()]
 _next_text = itertools.cycle(_texts)
 _lock = threading.Lock()
 _replicas = Counter()

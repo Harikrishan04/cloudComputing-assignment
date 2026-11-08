@@ -1,4 +1,8 @@
-import json, subprocess, sys, os, tempfile
+import json
+import os
+import subprocess
+import sys
+
 
 def test_clean_rejects_invalid_json(tmp_path):
     shard = tmp_path / "shard-0.jsonl"
@@ -13,6 +17,6 @@ def test_clean_rejects_invalid_json(tmp_path):
                          "--shards-glob", str(shard), "--commands-pool", str(pool),
                          "--schema", str(schema), "--out", str(out)],
                         cwd=os.path.dirname(os.path.dirname(__file__)),
-                        capture_output=True, text=True)
+                        capture_output=True, text=True, check=False)
     assert "rejected (a)" in r.stdout
     assert "kept                        : 0" in r.stdout

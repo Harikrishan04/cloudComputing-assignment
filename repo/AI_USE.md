@@ -1,10 +1,13 @@
 # AI_USE.md
 
-AI tools used: Claude (Anthropic).
+AI tools used: GitHub Copilot using Copilot SDK in VS Code.
 
 ## What it was used for
-- Scaffolding boilerplate code: the FastAPI service, the worker/clean.py cleaning
+- Scaffolding and repairing implementation code: the FastAPI service, the worker/clean.py cleaning
   script, Kubernetes manifests, the GitHub Actions workflow, and the Makefile.
+- Improving teacher output handling in `worker/worker.py` with bounded generation,
+  response extraction, retry handling, and progress logging.
+- Running infrastructure setup and validation commands throughout the assignment.
 - Working out the subnetting arithmetic for Task 5 and cross-checking it against
   `ipaddress` library output.
 - Drafting this repository's structure and the README's run order.

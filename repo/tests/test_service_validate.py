@@ -1,4 +1,6 @@
-import sys, os, json
+import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "service"))
 
 def test_validate_rejects_bad_keys(monkeypatch):

@@ -56,9 +56,9 @@ def load_rules(path):
                 sys.exit(f'{d} rule {r["rule"]}: protocol must be tcp, udp or all')
             if r['action'] not in ('allow', 'deny'):
                 sys.exit(f'{d} rule {r["rule"]}: action must be allow or deny')
-            if r['protocol'] != 'all':
-                if not (0 <= r.get('port_from', -1) <= r.get('port_to', -1) <= 65535):
-                    sys.exit(f'{d} rule {r["rule"]}: need 0 <= port_from <= port_to <= 65535')
+            if (r['protocol'] != 'all'
+                    and not (0 <= r.get('port_from', -1) <= r.get('port_to', -1) <= 65535)):
+                sys.exit(f'{d} rule {r["rule"]}: need 0 <= port_from <= port_to <= 65535')
             r['_net'] = ipaddress.ip_network(r['cidr'], strict=True)
         rules[d] = sorted(lst, key=lambda r: r['rule'])
     return rules
@@ -69,9 +69,10 @@ def decide(rules, pkt):
     for r in rules[pkt['direction']]:
         if addr not in r['_net']:
             continue
-        if r['protocol'] != 'all':
-            if r['protocol'] != pkt['protocol'] or not (r['port_from'] <= pkt['port'] <= r['port_to']):
-                continue
+        if (r['protocol'] != 'all'
+                and (r['protocol'] != pkt['protocol']
+                     or not (r['port_from'] <= pkt['port'] <= r['port_to']))):
+            continue
         return r['action'], r['rule']
     return 'deny', None
 

@@ -53,6 +53,13 @@ jobs:
         run: python tests/run_eval.py --model-dir ./eval_model --validation data/validation.jsonl --out predictions.jsonl
       - name: Score
         run: python tools/score.py predictions.jsonl data/validation.jsonl --out results/ci_score.json
+      - name: Save evaluation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation
+          path: |
+            predictions.jsonl
+            results/ci_score.json
 
   quality-gate:
     needs: evaluate
@@ -63,6 +70,10 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r service/requirements.txt
+      - name: Restore evaluation artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: evaluation
       - name: Re-run and enforce min validity
         run: python tools/score.py predictions.jsonl data/validation.jsonl --min-validity 95
 

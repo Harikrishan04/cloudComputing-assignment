@@ -1,0 +1,50 @@
+{"id": "C0001", "text": "do i have any meetings scheduled the weekend after next", "intent": "calendar_query", "date": "the weekend after next", "time": null, "place": null}
+{"id": "C0002", "text": "i need a reminder at two hundred every day to check on my mother", "intent": "alarm_set", "date": "every day", "time": "two hundred", "place": null}
+{"id": "C0003", "text": "remind me of the meeting on tuesday", "intent": "calendar_set", "date": "tuesday", "time": null, "place": null}
+{"id": "C0004", "text": "is my calendar free for thursday", "intent": "calendar_query", "date": "thursday", "time": null, "place": null}
+{"id": "C0005", "text": "do i have meeting with steve this week", "intent": "calendar_query", "date": "this week", "time": null, "place": "steve"}
+{"id": "C0006", "text": "is my schedule free today", "intent": "calendar_query", "date": "today", "time": null, "place": null}
+{"id": "C0007", "text": "remind me of my meeting tomorrow ten in the morning", "intent": "calendar_set", "date": "tomorrow", "time": "ten in the morning", "place": null}
+{"id": "C0008", "text": "what is the time in perth", "intent": "datetime_query", "date": null, "time": "perth", "place": null}
+{"id": "C0009", "text": "clear calendar events all", "intent": "calendar_remove", "date": null, "time": null, "place": null}
+{"id": "C0010", "text": "set a weekly meeting for friday nine am", "intent": "calendar_set", "date": "friday", "time": "nine am", "place": null}
+{"id": "C0011", "text": "google do i have any appointments on my calendar for friday", "intent": "calendar_query", "date": "friday", "time": null, "place": null}
+{"id": "C0012", "text": "alexa mark my calendar as unavailable today", "intent": "calendar_set", "date": "today", "time": null, "place": null}
+{"id": "C0013", "text": "set alarm for tomorrow at two pm", "intent": "alarm_set", "date": "tomorrow", "time": "two pm", "place": null}
+{"id": "C0014", "text": "what's the weather like on friday", "intent": "weather_query", "date": "friday", "time": null, "place": null}
+{"id": "C0015", "text": "olly can you remind me about the gym class in two hours", "intent": "recommendation_events", "date": "in two hours", "time": null, "place": "gym class"}
+{"id": "C0016", "text": "let me see my alarms", "intent": "calendar_query", "date": null, "time": null, "place": null}
+{"id": "C0017", "text": "it's my mother's birthday today olly send me a notification every year on this date", "intent": "recommendation_events", "date": "today", "time": null, "place": null}
+{"id": "C0018", "text": "was there an appointment set up for saturday", "intent": "calendar_set", "date": "saturday", "time": null, "place": null}
+{"id": "C0019", "text": "what's the weather for the entire week", "intent": "weather_query", "date": "the entire week", "time": null, "place": null}
+{"id": "C0020", "text": "is this the hottest day in mangalore", "intent": "recommendation_events", "date": null, "time": null, "place": "mangalore"}
+{"id": "C0021", "text": "what is the temperature right now", "intent": "weather_query", "date": null, "time": "right now", "place": null}
+{"id": "C0022", "text": "it is not going to rain is it", "intent": "weather_query", "date": null, "time": null, "place": null}
+{"id": "C0023", "text": "set an alarm for me for tomorrow at seven pm", "intent": "alarm_set", "date": "tomorrow", "time": "seven pm", "place": null}
+{"id": "C0024", "text": "set my alarm for time", "intent": "alarm_set", "date": null, "time": "time", "place": null}
+{"id": "C0025", "text": "what is happening", "intent": "recommendation_events", "date": null, "time": null, "place": null}
+{"id": "C0026", "text": "tell me any yard sales happening", "intent": "recommendation_events", "date": null, "time": null, "place": "yard sales"}
+{"id": "C0027", "text": "add an event labeled dan's graduation party may fifth in goshen", "intent": "calendar_set", "date": "may fifth", "time": null, "place": "goshen"}
+{"id": "C0028", "text": "what time is it in dallas", "intent": "datetime_query", "date": null, "time": null, "place": "dallas"}
+{"id": "C0029", "text": "clear all events from calendar", "intent": "calendar_remove", "date": null, "time": null, "place": null}
+{"id": "C0030", "text": "notify me when this meeting is close", "intent": "calendar_query", "date": null, "time": null, "place": null}
+{"id": "C0031", "text": "tell me current time", "intent": "datetime_query", "date": null, "time": null, "place": null}
+{"id": "C0032", "text": "how many alarms do i have", "intent": "calendar_query", "date": null, "time": null, "place": null}
+{"id": "C0033", "text": "what time and day is it today", "intent": "datetime_query", "date": "today", "time": null, "place": null}
+{"id": "C0034", "text": "what's on my calendar tomorrow", "intent": "calendar_query", "date": "tomorrow", "time": null, "place": null}
+{"id": "C0035", "text": "what's my calendar today", "intent": "calendar_query", "date": "today", "time": null, "place": null}
+{"id": "C0036", "text": "what is the weather like in seattle", "intent": "weather_query", "date": null, "time": null, "place": "seattle"}
+{"id": "C0037", "text": "change alarm setting", "intent": "alarm_set", "date": null, "time": null, "place": null}
+{"id": "C0038", "text": "set a reminder for vacation next month", "intent": "calendar_set", "date": "next month", "time": null, "place": null}
+{"id": "C0039", "text": "do i have any alarms", "intent": "alarm_query", "date": null, "time": null, "place": null}
+{"id": "C0040", "text": "go to the next event in the calendar and delete it", "intent": "calendar_remove", "date": null, "time": null, "place": null}
+{"id": "C0041", "text": "what events are ongoing today in biloxi", "intent": "recommendation_events", "date": "today", "time": null, "place": "biloxi"}
+{"id": "C0042", "text": "what alarms are upcoming", "intent": "calendar_query", "date": null, "time": null, "place": null}
+{"id": "C0043", "text": "describe scheduled events", "intent": "recommendation_events", "date": null, "time": null, "place": null}
+{"id": "C0044", "text": "what time is it right now in pacific time", "intent": "datetime_query", "date": null, "time": "pacific time", "place": null}
+{"id": "C0045", "text": "the twenty second is on what day of the week", "intent": "datetime_query", "date": "twenty second", "time": "day of the week", "place": null}
+{"id": "C0046", "text": "please set alarm to my mobile phones", "intent": "alarm_set", "date": null, "time": null, "place": "my mobile phones"}
+{"id": "C0047", "text": "clean up my schedule", "intent": "calendar_query", "date": null, "time": null, "place": null}
+{"id": "C0048", "text": "remove all scheduled events on my calendar please", "intent": "calendar_remove", "date": null, "time": null, "place": null}
+{"id": "C0049", "text": "alarm five pm", "intent": "alarm_set", "date": null, "time": "five pm", "place": null}
+{"id": "C0050", "text": "what should i wear is it cold outside", "intent": "recommendation_events", "date": null, "time": null, "place": null}

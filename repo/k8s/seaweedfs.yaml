@@ -4,7 +4,7 @@ metadata:
   name: seaweedfs
   namespace: data
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: seaweedfs
@@ -40,9 +40,20 @@ metadata:
   name: seaweedfs-s3
   namespace: data
 spec:
-  selector:
-    app: seaweedfs
   ports:
     - name: s3
       port: 8333
       targetPort: 8333
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: seaweedfs-s3
+  namespace: data
+subsets:
+  - addresses:
+      - ip: 172.18.0.1
+    ports:
+      - name: s3
+        port: 8333
+        protocol: TCP

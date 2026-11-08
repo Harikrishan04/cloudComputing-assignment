@@ -1,5 +1,8 @@
-"""Loads a downloaded model dir, runs it on every validation command, writes predictions.jsonl"""
-import argparse, json, torch
+"""Load a downloaded model directory and generate validation predictions."""
+import argparse
+import json
+
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 ap = argparse.ArgumentParser()

@@ -124,3 +124,22 @@ Replace `measured_rps` with your real Locust throughput number.
 ```bash
 make down
 ```
+
+## Completed evidence
+
+The live assignment run used a 50-record teacher subset and two trained student
+versions. Verified artifacts are under `results/`:
+
+- `base_report.json`, `student_report.json`, and `teacher_validation.json`
+- `loadtest_stats.csv`, `final_loadtest_stats.csv`, and `loadtest_headers.json`
+- `v2_loadtest_stats.csv`
+- `container_evidence.json`
+- `cold_start_evidence.json`
+- `cost_estimate.json`
+- `report/report.pdf`
+- `report/reflection.pdf`
+
+The service is deployed with two ready replicas, `Never` image pull policy, and
+`v1` restored after the model v2 rolling-update test. The SeaweedFS Kubernetes
+deployment remains scaled to zero because the host S3 gateway is used with an
+explicit `Endpoints` resource for stable local execution.

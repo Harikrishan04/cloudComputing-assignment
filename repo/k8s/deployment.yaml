@@ -13,10 +13,12 @@ spec:
       labels:
         app: parser-service
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3d-cloud-mini-agent-0
       containers:
         - name: parser-service
           image: parser-service:v1
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8000
           env:

@@ -10,20 +10,20 @@ Usage:
       --out models/v2 --subset 1500 --seed 43   # second version for Task 4
 """
 import argparse
+import csv
 import json
 import os
 import random
-import csv
 
-import yaml
 import torch
+import yaml
 from torch.utils.data import Dataset
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
+    DataCollatorForLanguageModeling,
     Trainer,
     TrainingArguments,
-    DataCollatorForLanguageModeling,
 )
 
 

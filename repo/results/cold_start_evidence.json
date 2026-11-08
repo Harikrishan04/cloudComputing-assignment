@@ -1,0 +1,8 @@
+{
+  "measurements": [
+    {"pod_start": 1, "milliseconds": 16425},
+    {"pod_start": 2, "milliseconds": 21391},
+    {"pod_start": 3, "milliseconds": 19023}
+  ],
+  "rolling_update_v2_seconds": 36
+}

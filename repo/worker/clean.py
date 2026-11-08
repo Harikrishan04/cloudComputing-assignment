@@ -67,7 +67,7 @@ def main():
 
                 try:
                     parsed = json.loads(raw)
-                except Exception:
+                except json.JSONDecodeError:
                     rejected_a += 1
                     continue
 

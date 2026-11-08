@@ -1,0 +1,12 @@
+{
+  "image": "parser-service:v1",
+  "image_size_gib": 1.57,
+  "image_size_bytes": 1685482224,
+  "cpu_limit": "1",
+  "memory_limit": "1Gi",
+  "requests": 50,
+  "failures": 0,
+  "throughput_rps": 0.915,
+  "duration_seconds": 54.661,
+  "peak_memory_mib": 692.9
+}
