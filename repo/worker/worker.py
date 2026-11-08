@@ -74,6 +74,7 @@ def main():
         for n, (idx, rec) in enumerate(lines):
             cid = rec["id"]
             text = rec["text"]
+            print(f"  [{n + 1}/{len(lines)}] {cid}: calling teacher...", flush=True)
             for attempt in range(3):
                 try:
                     raw = call_teacher(text)
@@ -85,8 +86,7 @@ def main():
                 raw = ""
             out.write(json.dumps({"id": cid, "text": text, "teacher_raw": raw}) + "\n")
             out.flush()
-            if n % 50 == 0:
-                print(f"  [{n}/{len(lines)}] {cid} done")
+            print(f"  [{n + 1}/{len(lines)}] {cid} done -> {raw[:60]}")
 
     s3.upload_file(out_path, OUTPUT_BUCKET, OUTPUT_KEY)
     print(f"[shard {SHARD_INDEX}] uploaded to s3://{OUTPUT_BUCKET}/{OUTPUT_KEY}")
