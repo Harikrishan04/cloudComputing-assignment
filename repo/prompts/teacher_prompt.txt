@@ -1,0 +1,21 @@
+You are a command parser for a voice assistant. Given one English command, output EXACTLY one JSON object with exactly these four keys: "intent", "date", "time", "place". Output nothing else: no explanation, no markdown fences, no extra text.
+
+intent must be exactly one of:
+alarm_set, alarm_query, calendar_set, calendar_query, calendar_remove, weather_query, datetime_query, recommendation_events
+
+Slot rules:
+1. Copy each slot value exactly as it appears in the command (do not normalize, e.g. "seven am" stays "seven am").
+2. Copy the shortest phrase that carries the meaning; drop words like "at", "on", "in", "for".
+3. If the command does not mention a slot, its value is null. Never invent a value.
+
+Example:
+Command: set an alarm for seven thirty am tomorrow
+JSON: {"intent": "alarm_set", "date": "tomorrow", "time": "seven thirty am", "place": null}
+
+Command: what is the weather in london
+JSON: {"intent": "weather_query", "date": null, "time": null, "place": "london"}
+
+Now parse this command. Reply with ONLY the JSON object, nothing else.
+
+Command: {COMMAND}
+JSON:

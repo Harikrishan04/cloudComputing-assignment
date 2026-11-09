@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      model_release_tag:
+        description: "GitHub Release tag to evaluate (e.g. v1 or bad-model)"
+        required: false
+        default: ""
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check service worker training tests
+
+  unit-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r service/requirements.txt pytest
+      - run: pytest tests -v
+
+  evaluate:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r service/requirements.txt
+      - name: Download model from GitHub Release
+        run: |
+          TAG="${{ github.event.inputs.model_release_tag }}"
+          if [ -z "$TAG" ]; then TAG="v1"; fi
+          gh release download "$TAG" --dir ./eval_model --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Run model and produce predictions.jsonl
+        run: python tests/run_eval.py --model-dir ./eval_model --validation data/validation.jsonl --out predictions.jsonl
+      - name: Score
+        run: python tools/score.py predictions.jsonl data/validation.jsonl --out results/ci_score.json
+
+  quality-gate:
+    needs: evaluate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r service/requirements.txt
+      - name: Re-run and enforce min validity
+        run: python tools/score.py predictions.jsonl data/validation.jsonl --min-validity 95
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

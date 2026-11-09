@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: parser-ingress
+  namespace: app
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /parse
+            pathType: Prefix
+            backend:
+              service:
+                name: parser-service
+                port:
+                  number: 80
