@@ -47,6 +47,9 @@ jobs:
           python-version: "3.11"
       - run: pip install -r service/requirements.txt
         working-directory: repo
+      - name: Install model-compatible evaluation dependencies
+        run: pip install --upgrade transformers==5.22.2 tokenizers==0.23.3
+        working-directory: repo
       - name: Download model from GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
