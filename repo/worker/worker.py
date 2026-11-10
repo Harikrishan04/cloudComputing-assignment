@@ -35,6 +35,7 @@ PROMPT_PATH = os.environ.get(
     str(Path(__file__).resolve().parents[1] / "prompts" / "teacher_prompt.txt"),
 )
 MODEL = "phi3.5"
+LIMIT = int(os.environ.get("LIMIT", "0"))
 
 with open(PROMPT_PATH) as f:
     PROMPT_TEMPLATE = f.read()
@@ -58,9 +59,9 @@ def call_teacher(command_text: str) -> str:
             "options": {
                 "temperature": 0,
                 "seed": 42,
-                "num_predict": 80,
+                "num_predict": 48,
                 "stop": ["\n\n", "```"],
-                "num_ctx": 1024,
+                "num_ctx": 512,
             },
         },
         timeout=240,
@@ -88,6 +89,8 @@ def main():
                 continue
             if i % SHARD_COUNT == SHARD_INDEX:
                 lines.append((i, json.loads(line)))
+                if LIMIT and len(lines) >= LIMIT:
+                    break
 
     print(f"[shard {SHARD_INDEX}/{SHARD_COUNT}] processing {len(lines)} commands")
 

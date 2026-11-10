@@ -9,9 +9,12 @@ up:
 down:
 	k3d cluster delete cloud-mini
 
-SUBSET ?= 1500
+SUBSET ?=
 train:
-	python training/train.py --train datasets/v1/train.jsonl --config training/config.yaml --out models/v1 --subset $(SUBSET)
+	python training/train.py --train datasets/v1/train.jsonl --config training/config.yaml --out models/v1 $(if $(SUBSET),--subset $(SUBSET),)
+
+train-subset:
+	$(MAKE) train SUBSET=50
 
 build-image:
 	docker build -f service/Dockerfile -t parser-service:v1 .

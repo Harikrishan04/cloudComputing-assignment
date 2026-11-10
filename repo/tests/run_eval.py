@@ -27,5 +27,17 @@ with open(args.validation) as f, open(args.out, "w") as out:
             gen = model.generate(**inputs, max_new_tokens=args.max_new_tokens,
                                   do_sample=False, pad_token_id=tok.eos_token_id)
         full = tok.decode(gen[0], skip_special_tokens=True)
-        pred = full[len(prompt):].strip()
+        gen_text = full[len(prompt):].strip()
+        pred = gen_text
+        if "{" in gen_text:
+            start = gen_text.index("{")
+            depth = 0
+            for i, ch in enumerate(gen_text[start:], start=start):
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        pred = gen_text[start:i + 1]
+                        break
         out.write(json.dumps({"id": rec["id"], "prediction": pred}) + "\n")

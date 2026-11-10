@@ -53,7 +53,7 @@ python worker/clean.py --shards-glob "shards/*.jsonl" --out datasets/v1/train.js
 ## 3. Task 2 — train the student
 ```bash
 make train SUBSET=50     # quick smoke test
-make train                # full run on first 1500 records -> models/v1
+make train                # full run on all cleaned records -> models/v1
 python training/train.py --train datasets/v1/train.jsonl --config training/config.yaml \
     --out models/v2 --seed 43     # second version for Task 4
 
@@ -127,10 +127,28 @@ make down
 
 ## Completed evidence
 
-The live assignment run used a 50-record teacher subset and two trained student
-versions. Verified artifacts are under `results/`:
+The full Kaggle labelling run produced 3,000 teacher responses. Cleaning kept
+2,918 records: 6 were rejected for invalid intents, 26 for invalid slot values,
+and 50 duplicate commands were removed. The sum check was 3,000/3,000. The
+dataset checksum is recorded in `datasets/v1/train.sha256`.
+
+The imported Kaggle full-data checkpoint was evaluated on the 100 validation
+examples and produced empty output for every example (0% JSON validity); weight
+inspection found NaNs in all 70,426,624 parameters, so it is not a usable
+release/deployment model. The trainer now explicitly loads float32 weights and
+refuses to save a checkpoint containing non-finite parameters. The previously
+validated v1 and v2 checkpoints remain the usable student models: each had 100%
+JSON validity on validation. Their full-frame accuracies were 11% and 13%,
+respectively. To retrain without relabelling, upload
+`kaggle-full-training-retry.zip` to Kaggle and train from its 2,918-row
+`train.jsonl`; only release a new checkpoint after it passes the 95% JSON
+validity gate.
+
+The current evaluated artifacts are under `results/`:
 
 - `base_report.json`, `student_report.json`, and `teacher_validation.json`
+- `kaggle_full_data_report.json` and `kaggle_full_data_predictions.jsonl`
+- `kaggle_full_data_health.json`
 - `loadtest_stats.csv`, `final_loadtest_stats.csv`, and `loadtest_headers.json`
 - `v2_loadtest_stats.csv`
 - `container_evidence.json`

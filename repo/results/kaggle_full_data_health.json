@@ -1,0 +1,20 @@
+{
+  "training_data": {
+    "labelled_records": 3000,
+    "clean_records": 2918,
+    "invalid_json": 0,
+    "wrong_keys": 0,
+    "invalid_intent": 6,
+    "invalid_slot": 26,
+    "duplicates_removed": 50,
+    "sha256": "3e165f67af879a17f5ecb53f54d7ee380b90f47a6380ea8abb7344017e09e2a3"
+  },
+  "kaggle_checkpoint": {
+    "parameter_count": 70426624,
+    "non_finite_parameters": 70426624,
+    "nan_parameters": 70426624,
+    "infinite_parameters": 0,
+    "validation_json_validity_percent": 0.0,
+    "release_eligible": false
+  }
+}

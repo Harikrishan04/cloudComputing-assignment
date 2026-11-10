@@ -4,7 +4,7 @@ Sequence-level distillation: train the student to produce the teacher's exact te
 
 Usage:
   python training/train.py --train datasets/v1/train.jsonl --config training/config.yaml \
-      --out models/v1 --subset 1500
+      --out models/v1
 
   python training/train.py --train datasets/v1/train.jsonl --config training/config.yaml \
       --out models/v2 --subset 1500 --seed 43   # second version for Task 4
@@ -75,7 +75,7 @@ def main():
     ap.add_argument("--train", required=True)
     ap.add_argument("--config", default="training/config.yaml")
     ap.add_argument("--out", required=True, help="output dir for model+tokenizer")
-    ap.add_argument("--subset", type=int, default=None, help="use only first N records")
+    ap.add_argument("--subset", type=int, default=None, help="use only first N records (default: all)")
     ap.add_argument("--seed", type=int, default=None, help="override seed in config.yaml")
     ap.add_argument("--loss-csv", default="training/loss.csv")
     args = ap.parse_args()
@@ -85,20 +85,24 @@ def main():
 
     seed = args.seed if args.seed is not None else cfg["seed"]
     set_seed(seed)
+    use_cpu = not torch.cuda.is_available()
+    print(f"Training device: {'CPU' if use_cpu else torch.cuda.get_device_name(0)}")
 
     records = []
     with open(args.train) as f:
         for line in f:
             if line.strip():
                 records.append(json.loads(line))
-    n = args.subset if args.subset else min(1500, len(records))
+    n = args.subset if args.subset is not None else len(records)
     records = records[:n]
     print(f"Training on {len(records)} records (seed={seed})")
 
     tokenizer = AutoTokenizer.from_pretrained(cfg["model_name"])
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained(cfg["model_name"])
+    model = AutoModelForCausalLM.from_pretrained(
+        cfg["model_name"], torch_dtype=torch.float32
+    )
 
     dataset = CommandJsonDataset(records, tokenizer, cfg["max_seq_length"])
 
@@ -119,7 +123,7 @@ def main():
         save_strategy="no",
         report_to=[],
         seed=seed,
-        use_cpu=True,
+        use_cpu=use_cpu,
     )
 
     trainer = LoggingTrainer(
@@ -129,6 +133,9 @@ def main():
         data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
     )
     trainer.train()
+
+    if not all(torch.isfinite(parameter).all().item() for parameter in model.parameters()):
+        raise RuntimeError("Training produced non-finite model weights; refusing to save checkpoint")
 
     os.makedirs(args.out, exist_ok=True)
     model.save_pretrained(args.out)
