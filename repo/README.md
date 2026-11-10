@@ -132,23 +132,24 @@ The full Kaggle labelling run produced 3,000 teacher responses. Cleaning kept
 and 50 duplicate commands were removed. The sum check was 3,000/3,000. The
 dataset checksum is recorded in `datasets/v1/train.sha256`.
 
-The imported Kaggle full-data checkpoint was evaluated on the 100 validation
-examples and produced empty output for every example (0% JSON validity); weight
-inspection found NaNs in all 70,426,624 parameters, so it is not a usable
-release/deployment model. The trainer now explicitly loads float32 weights and
-refuses to save a checkpoint containing non-finite parameters. The previously
-validated v1 and v2 checkpoints remain the usable student models: each had 100%
-JSON validity on validation. Their full-frame accuracies were 11% and 13%,
-respectively. To retrain without relabelling, upload
-`kaggle-full-training-retry.zip` to Kaggle and train from its 2,918-row
-`train.jsonl`; only release a new checkpoint after it passes the 95% JSON
-validity gate.
+The first Kaggle full-data checkpoint was invalid: all 70,426,624 parameters
+were NaN and its validation output had 0% JSON validity. That failed checkpoint
+is preserved under `models/kaggle-full-data-v1/` for diagnosis. The trainer was
+updated to load float32 weights and refuse to save non-finite parameters. The
+corrected model was trained on all 2,918 cleaned records, has finite weights,
+and passes the 95% JSON-validity gate with 99% validity, 37% full-frame
+accuracy, and no missing predictions. Its report and predictions are
+`results/student_report.json` and `results/student_predictions.jsonl`; its
+loss-by-epoch is in `training/loss.csv`. The deployable model is in
+`models/v1/`, with checksums in `models/v1/model.sha256` and release archive
+`results/models-v1.tar.gz`. The initial 50-record v1 checkpoint is retained in
+`models/v1-subset50-backup/`.
 
 The current evaluated artifacts are under `results/`:
 
 - `base_report.json`, `student_report.json`, and `teacher_validation.json`
 - `kaggle_full_data_report.json` and `kaggle_full_data_predictions.jsonl`
-- `kaggle_full_data_health.json`
+- `kaggle_full_data_health.json` (records the failed first Kaggle checkpoint)
 - `loadtest_stats.csv`, `final_loadtest_stats.csv`, and `loadtest_headers.json`
 - `v2_loadtest_stats.csv`
 - `container_evidence.json`
