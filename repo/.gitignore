@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 models/
 results/models-*.tar.gz
+/repo/model-v1-full-2918.tar.gz
