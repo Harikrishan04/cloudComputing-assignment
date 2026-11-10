@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       model_release_tag:
-        description: "GitHub Release tag to evaluate (e.g. v1 or bad-model)"
+        description: "GitHub Release tag to evaluate (for example v1)"
         required: false
-        default: ""
+        default: "v1"
 
 jobs:
   lint:
@@ -20,7 +20,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install ruff
-      - run: ruff check service worker training tests
+      - run: ruff check service worker training tests tools/kaggle_label.py
+        working-directory: repo
 
   unit-tests:
     needs: lint
@@ -31,9 +32,12 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r service/requirements.txt pytest
+        working-directory: repo
       - run: pytest tests -v
+        working-directory: repo
 
   evaluate:
+    if: github.event_name == 'workflow_dispatch'
     needs: unit-tests
     runs-on: ubuntu-latest
     steps:
@@ -42,26 +46,35 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r service/requirements.txt
+        working-directory: repo
       - name: Download model from GitHub Release
-        run: |
-          TAG="${{ github.event.inputs.model_release_tag }}"
-          if [ -z "$TAG" ]; then TAG="v1"; fi
-          gh release download "$TAG" --dir ./eval_model --clobber
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Run model and produce predictions.jsonl
+          TAG: ${{ inputs.model_release_tag }}
+        run: |
+          mkdir -p eval_model
+          gh release download "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern models-v1.tar.gz \
+            --dir .
+          tar -xzf models-v1.tar.gz -C eval_model --strip-components=1
+        working-directory: repo
+      - name: Run evaluation and produce predictions
         run: python tests/run_eval.py --model-dir ./eval_model --validation data/validation.jsonl --out predictions.jsonl
+        working-directory: repo
       - name: Score
         run: python tools/score.py predictions.jsonl data/validation.jsonl --out results/ci_score.json
+        working-directory: repo
       - name: Save evaluation artifacts
         uses: actions/upload-artifact@v4
         with:
           name: evaluation
           path: |
-            predictions.jsonl
-            results/ci_score.json
+            repo/predictions.jsonl
+            repo/results/ci_score.json
 
   quality-gate:
+    if: github.event_name == 'workflow_dispatch'
     needs: evaluate
     runs-on: ubuntu-latest
     steps:
@@ -70,12 +83,15 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r service/requirements.txt
+        working-directory: repo
       - name: Restore evaluation artifacts
         uses: actions/download-artifact@v4
         with:
           name: evaluation
-      - name: Re-run and enforce min validity
+          path: repo
+      - name: Enforce minimum JSON validity
         run: python tools/score.py predictions.jsonl data/validation.jsonl --min-validity 95
+        working-directory: repo
 
   secret-scan:
     runs-on: ubuntu-latest

@@ -101,10 +101,11 @@ python tools/nacl_sim.py network/nacl.json network/packets_sample.jsonl --check
 ```
 
 ## 7. Task 6 — CI/CD
-`.github/workflows/ci.yml` runs lint → unit tests → evaluation → quality gate →
-secret scan on every push. To demonstrate the gate failing, push the **untrained**
-Pythia-70M as a GitHub Release and trigger the workflow manually with that tag via
-`workflow_dispatch`.
+The repository-root `.github/workflows/ci.yml` runs lint, unit tests, and a
+secret scan on pushes. After publishing the `v1` release asset, trigger
+`workflow_dispatch` with `model_release_tag=v1` to run evaluation and the 95%
+JSON-validity quality gate. To demonstrate gate failure, dispatch it with a
+release tag containing an untrained model.
 ```bash
 pytest tests/ -v
 ruff check service worker training tests
